@@ -1,0 +1,56 @@
+<div class="container py-5">
+  <button class="btn btn-outline-secondary mb-4" routerLink="/dashboard">
+    ← Volver al Inicio
+  </button>
+
+  <h2 class="text-center mb-4">Pagos Registrados</h2>
+
+  <div class="row g-4">
+    <div *ngFor="let payment of payments" class="col-md-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Pago #{{ payment.id }}</h5>
+          <p class="text-muted small">
+            Mesa: <strong>{{ payment.table_number }}</strong><br>
+            Mesero: <strong>{{ payment.waiter_name }}</strong><br>
+            Cajero: <strong>{{ payment.cashier_name }}</strong><br>
+            Método: 
+            <span class="badge bg-primary">{{ payment.payment_method | titlecase }}</span><br>
+            Total Pagado: <strong>${{ payment.total_paid }}</strong><br>
+            Fecha: {{ payment.created_at | date:'short' }}
+          </p>
+
+          <button class="btn btn-outline-info btn-sm" (click)="toggleDetails(payment.order_id)">
+            {{ expandedPaymentId === payment.order_id ? 'Ocultar Detalles' : 'Ver Detalles' }}
+          </button>
+
+          <div *ngIf="expandedPaymentId === payment.order_id && paymentDetails[payment.order_id]" class="mt-3">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cant.</th>
+                  <th>Precio</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of paymentDetails[payment.order_id]">
+                  <td>{{ item.product_name }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>${{ item.unit_price }}</td>
+                  <td>${{ item.total }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="payments.length === 0" class="text-center mt-4">
+    <p>No hay pagos registrados.</p>
+  </div>
+</div>

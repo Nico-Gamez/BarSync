@@ -1,0 +1,53 @@
+<div class="container py-5">
+  <button class="btn btn-outline-secondary mb-4" routerLink="/tables">
+    ← Volver
+  </button>
+
+  <h2 class="text-center mb-4">Nuevo Pedido</h2>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card p-4 shadow-sm h-100">
+        <h5 class="mb-3">Productos Disponibles</h5>
+
+        <div *ngIf="availableProducts.length > 0; else noProducts">
+          <div *ngFor="let product of availableProducts" class="d-flex justify-content-between align-items-center border-bottom py-2">
+            <span>{{ product.name }} - ${{ product.price }} (Stock: {{ product.quantity }})</span>
+            <button class="btn btn-sm btn-primary" (click)="addProduct(product)" [disabled]="product.quantity <= 0">Agregar</button>
+          </div>
+        </div>
+
+        <ng-template #noProducts>
+          <p class="text-muted text-center">⚠️ No hay productos disponibles.</p>
+        </ng-template>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card p-4 shadow-sm h-100">
+        <h5 class="mb-3">Productos en Pedido</h5>
+
+        <div *ngIf="productsAdded.length > 0; else noItems">
+          <ul class="list-group mb-3">
+            <li *ngFor="let item of productsAdded" class="list-group-item d-flex justify-content-between align-items-center">
+              {{ item.name }} (x{{ item.quantity }})
+              <div>
+                <button class="btn btn-sm btn-secondary me-1" (click)="decreaseProduct(item)">-</button>
+                <button class="btn btn-sm btn-success" (click)="addProduct({ id: item.productId, name: item.name, price: item.unitPrice, quantity: 1 })">+</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <ng-template #noItems>
+          <p class="text-muted text-center">⚠️ Aún no has agregado productos.</p>
+        </ng-template>
+
+        <div class="d-flex justify-content-center gap-3 mt-4">
+          <button class="btn btn-primary" (click)="confirmOrder()">Confirmar Pedido</button>
+          <button class="btn btn-danger" (click)="cancelOrder()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

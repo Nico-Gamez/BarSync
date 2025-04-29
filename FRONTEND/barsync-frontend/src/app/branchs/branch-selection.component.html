@@ -1,0 +1,35 @@
+<div class="container py-5">
+  <h2 class="text-center mb-4">Selecciona una Sucursal</h2>
+
+  <div class="card p-4 shadow-sm">
+    <div *ngIf="branches.length > 0; else manualEntry">
+      <div class="mb-3">
+        <label for="branchSelect" class="form-label">Seleccionar Sede:</label>
+        <select id="branchSelect" class="form-select" [(ngModel)]="branchId">
+          <option [ngValue]="null" disabled>-- Selecciona una sucursal --</option>
+          <option *ngFor="let branch of branches" [ngValue]="branch.id">
+            {{ branch.name }} - {{ branch.location }}
+          </option>
+        </select>
+      </div>
+      <div class="text-center mt-4">
+        <button class="btn btn-primary w-100" (click)="selectBranch()">Continuar</button>
+      </div>
+    </div>
+
+    <ng-template #manualEntry>
+      <p class="text-center text-muted">⚠️ No se encontraron sedes disponibles. Ingresa el ID manualmente:</p>
+      <div class="mb-3">
+        <label for="branchId">ID de Sede:</label>
+        <input type="number" id="branchId" class="form-control" [(ngModel)]="branchId" min="1" />
+      </div>
+      <div class="text-center mt-4">
+        <button class="btn btn-primary w-100" (click)="selectBranch()">Continuar</button>
+      </div>
+    </ng-template>
+  </div>
+
+  <div class="text-center mt-4">
+    <a class="btn btn-outline-secondary" routerLink="/login">← Volver al Login</a>
+  </div>
+</div>

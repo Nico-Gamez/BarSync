@@ -1,0 +1,46 @@
+<div class="container py-5">
+  <button class="btn btn-outline-secondary mb-4" routerLink="/dashboard">
+    ← Volver al Inicio
+  </button>
+
+  <h2 class="text-center mb-4">Gestión de Mesas</h2>
+
+  <div *ngIf="successMessage" class="alert alert-success text-center">
+    {{ successMessage }}
+  </div>
+
+  <div *ngIf="role === 'admin'" class="card p-3 shadow-sm mb-4">
+    <h5>Crear Nueva Mesa</h5>
+    <div class="input-group">
+      <input type="number" [(ngModel)]="newTableNumber" class="form-control" placeholder="Número de mesa" />
+      <select [(ngModel)]="newTableStatus" class="form-select">
+        <option value="free">Libre</option>
+        <option value="occupied">Ocupada</option>
+      </select>
+      <button class="btn btn-success" (click)="createTable()">Crear</button>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-4" *ngFor="let table of tables">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body text-center">
+          <h5 class="card-title">Mesa #{{ table.table_number }}</h5>
+          <p class="text-muted">Estado: <strong>{{ table.status === 'free' ? 'Libre' : 'Ocupada' }}</strong></p>
+
+          <button class="btn btn-warning btn-sm mb-2" (click)="toggleTableStatus(table)">
+            Cambiar Estado
+          </button>
+
+          <button class="btn btn-primary btn-sm mb-2" (click)="createOrder(table.id)">
+            Crear Pedido
+          </button>
+
+          <button *ngIf="role === 'admin'" class="btn btn-danger btn-sm" (click)="deleteTable(table.id)">
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

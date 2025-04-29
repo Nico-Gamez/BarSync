@@ -1,0 +1,119 @@
+<div class="container py-5">
+  <button class="btn btn-outline-secondary mb-4" routerLink="/dashboard">
+    ← Volver al Inicio
+  </button>
+
+  <h2 class="text-center mb-4">Inventario de Productos</h2>
+
+  <!-- NUEVO PRODUCTO -->
+  <div class="card shadow-sm p-4 mb-5" *ngIf="isAdmin">
+    <h5>Nuevo Producto</h5>
+
+    <div class="row g-3 mb-3">
+      <div class="col-md-3">
+        <label class="form-label">Nombre del Producto</label>
+        <input type="text" [(ngModel)]="newProduct.name" name="name" class="form-control" placeholder="Nombre" />
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Costo</label>
+        <input type="number" [(ngModel)]="newProduct.cost" name="cost" class="form-control" placeholder="Costo" />
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Precio de Venta</label>
+        <input type="number" [(ngModel)]="newProduct.price" name="price" class="form-control" placeholder="Precio" />
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Stock Inicial</label>
+        <input type="number" [(ngModel)]="newProduct.stock" name="stock" class="form-control" placeholder="Stock" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Sucursal</label>
+        <select [(ngModel)]="newProduct.branchId" name="branchId" class="form-select">
+          <option *ngFor="let branch of branches" [value]="branch.id">{{ branch.name }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-success" (click)="createProduct()">Crear Producto</button>
+    </div>
+  </div>
+
+  <!-- LISTADO -->
+  <div class="card shadow-sm p-4">
+    <h5>Productos Disponibles</h5>
+
+    <div class="table-responsive mt-3">
+      <table class="table table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Nombre</th>
+            <th>Costo</th>
+            <th>Venta</th>
+            <th>Stock</th>
+            <th>Sucursal</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of products">
+            <td>{{ p.name }}</td>
+            <td>${{ p.cost }}</td>
+            <td>${{ p.price }}</td>
+            <td>{{ p.stock }}</td>
+            <td>{{ p.branch_name }}</td>
+            <td>
+              <button class="btn btn-sm btn-warning me-1" (click)="startEdit(p)">Editar</button>
+              <button class="btn btn-sm btn-danger" (click)="deleteProduct(p.id)">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="products.length === 0" class="text-center mt-3">
+        <p class="text-muted">No hay productos registrados.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE EDICIÓN -->
+  <div *ngIf="editMode" class="modal-backdrop fade show"></div>
+  <div *ngIf="editMode" class="modal d-block" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Editar Producto</h5>
+          <button type="button" class="btn-close" (click)="cancelEdit()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input [(ngModel)]="productToEdit.name" class="form-control" placeholder="Nombre" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Costo</label>
+            <input [(ngModel)]="productToEdit.cost" type="number" class="form-control" placeholder="Costo" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Precio Venta</label>
+            <input [(ngModel)]="productToEdit.price" type="number" class="form-control" placeholder="Precio" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Stock</label>
+            <input [(ngModel)]="productToEdit.stock" type="number" class="form-control" placeholder="Stock" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Sucursal</label>
+            <select [(ngModel)]="productToEdit.branch_id" class="form-select">
+              <option *ngFor="let branch of branches" [value]="branch.id">{{ branch.name }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" (click)="updateProduct()">Guardar Cambios</button>
+          <button class="btn btn-secondary" (click)="cancelEdit()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
