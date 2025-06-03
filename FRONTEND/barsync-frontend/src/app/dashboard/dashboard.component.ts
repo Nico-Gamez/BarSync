@@ -45,12 +45,15 @@ export class DashboardComponent implements OnInit {
       this.modules = [
         { title: 'Mesas', description: 'Gestionar mesas', link: '/tables' },
         { title: 'Productos', description: 'Gestionar productos', link: '/products' },
+        { title: 'Reportes', description: 'Reporte de productos por fecha', link: '/report-product'  },
         { title: 'Pedidos', description: 'Gestionar pedidos', link: '/orders' },
-        { title: 'Pagos', description: 'Gestionar pagos', link: '/payments' }
+        { title: 'Pagos', description: 'Gestionar pagos', link: '/payments' },
+        { title: 'Usuarios', description: 'Crear y administrar usuarios', link: '/user-management' }
       ];
     } else if (this.role === 'cashier') {
       this.modules = [
         { title: 'Productos', description: 'Gestionar productos', link: '/products' },
+        { title: 'Reportes', description: 'Reporte de productos por fecha', link: '/report-product'  },
         { title: 'Pedidos', description: 'Gestionar pedidos', link: '/orders' },
         { title: 'Pagos', description: 'Gestionar pagos', link: '/payments' }
       ];

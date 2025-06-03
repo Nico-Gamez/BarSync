@@ -4,8 +4,11 @@ const { success, error } = require('../utils/api.response');
 // Crear mesa
 exports.createTable = async (req, res) => {
   try {
-    const { table_number, status } = req.body;
-    const branchId = req.user.branchId;
+    const { table_number, status, branchId: bodyBranchId } = req.body;
+    const tokenBranchId = req.user.branchId;
+    const role = req.user.role;
+
+    const branchId = role === 'admin' ? bodyBranchId : tokenBranchId;
 
     if (!table_number || !branchId) {
       return error(res, 'E80', '❌ Número de mesa o sucursal no válidos.', 400);
@@ -19,10 +22,14 @@ exports.createTable = async (req, res) => {
   }
 };
 
+
+
 // Obtener todas las mesas
 exports.getAllTables = async (req, res) => {
   try {
-    const { branchId } = req.query;
+    const user = req.user;
+    const isAdmin = user.role === 'admin';
+    const branchId = isAdmin ? req.query.branchId : user.branchId;
 
     if (!branchId) {
       return error(res, 'E90', '❌ Debes proporcionar el branchId.', 400);
@@ -35,6 +42,7 @@ exports.getAllTables = async (req, res) => {
     return error(res, 'E91', '❌ Error listando mesas.', 500);
   }
 };
+
 
 
 // Cambiar estado de una mesa

@@ -15,28 +15,28 @@ import { AuthService } from '../core/auth.service';
 export class ProductListComponent implements OnInit {
   products: any[] = [];
   branches: any[] = [];
-  
-  newProduct = { name: '', description: '', cost: 0, price: 0, stock: 0, branchId: 1 };  // 🔥 CORREGIDO
+
+  // 👇 Eliminamos branchId de newProduct
+  newProduct = { name: '', description: '', cost: 0, price: 0, stock: 0 };
 
   editMode = false;
   productToEdit: any = {};
+
+  isAdmin = false;
 
   constructor(
     private productService: ProductService,
     private branchService: BranchService,
     private authService: AuthService
   ) {}
-  
-  isAdmin = false;
+
   ngOnInit() {
-    const user = this.authService.getUserData(); 
+    const user = this.authService.getUserData();
     this.isAdmin = user?.role === 'admin';
-    
+
     this.loadProducts();
     this.loadBranches();
   }
-  
-  
 
   loadProducts() {
     console.log('📥 Cargando productos...');
@@ -50,13 +50,14 @@ export class ProductListComponent implements OnInit {
       }
     });
   }
-  
 
   createProduct() {
-    console.log('📤 Enviando producto:', this.newProduct); // para debug
+    console.log('📤 Enviando producto:', this.newProduct);
+
     this.productService.create(this.newProduct).subscribe({
       next: () => {
-        this.newProduct = { name: '', description: '', cost: 0, price: 0, stock: 0, branchId: 1 };  // 🔥 CORREGIDO
+        // 🔁 Reiniciar formulario sin branchId
+        this.newProduct = { name: '', description: '', cost: 0, price: 0, stock: 0 };
         this.loadProducts();
       },
       error: (err) => {
@@ -75,17 +76,16 @@ export class ProductListComponent implements OnInit {
       console.error('❌ Producto inválido para actualizar.');
       return;
     }
-  
+
     const updatedFields: any = {
       name: this.productToEdit.name,
       cost: this.productToEdit.cost,
       price: this.productToEdit.price,
-      branch_id: this.productToEdit.branch_id,
-      stock: this.productToEdit.stock // 🔥 Agregamos stock aquí
+      stock: this.productToEdit.stock // ✅ Solo lo editable
     };
-  
+
     console.log('📤 Actualizando producto ID:', this.productToEdit.id, 'con campos:', updatedFields);
-  
+
     this.productService.update(this.productToEdit.id, updatedFields).subscribe({
       next: () => {
         console.log('✅ Producto actualizado correctamente');
@@ -98,9 +98,6 @@ export class ProductListComponent implements OnInit {
       }
     });
   }
-  
-  
-  
 
   deleteProduct(id: number) {
     if (confirm('¿Estás seguro de eliminar este producto?')) {
@@ -117,7 +114,6 @@ export class ProductListComponent implements OnInit {
       });
     }
   }
-  
 
   cancelEdit() {
     this.editMode = false;
@@ -127,10 +123,9 @@ export class ProductListComponent implements OnInit {
   loadBranches() {
     this.branchService.getAllBranches().subscribe({
       next: (res) => {
-        this.branches = res.data; // ✅ ESTA es la forma correcta
+        this.branches = res.data;
       },
       error: (err) => console.error('❌ Error cargando sedes:', err)
     });
   }
-
 }

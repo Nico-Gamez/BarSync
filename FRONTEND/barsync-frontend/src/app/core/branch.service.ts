@@ -4,14 +4,15 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class BranchService {
-  
   private readonly branchKey = 'branchId';
-  private apiUrl = 'http://localhost:3000/api/branches'; // 🔥 Nuevo para consumir el backend
+  private apiUrl = 'http://localhost:3000/api/branches';
 
-  constructor(private http: HttpClient) {} // 🔥 Constructor para HttpClient
+  constructor(private http: HttpClient) {}
 
   setBranchId(branchId: number) {
-    localStorage.setItem(this.branchKey, branchId.toString());
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(this.branchKey, branchId.toString());
+    }
   }
 
   getBranchId(): number | null {
@@ -23,15 +24,20 @@ export class BranchService {
   }
 
   clearBranchId() {
-    localStorage.removeItem(this.branchKey);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(this.branchKey);
+    }
   }
 
-  // 🔥 Nuevo método para traer sedes
   getAllBranches(): Observable<{ data: any[] }> {
     const token = localStorage.getItem('token');
     const headers = { Authorization: `Bearer ${token}` };
     return this.http.get<{ data: any[] }>(this.apiUrl, { headers });
   }
-  
-  
+
+  getBranchById(id: number): Observable<{ data: any }> {
+    const token = localStorage.getItem('token');
+    const headers = { Authorization: `Bearer ${token}` };
+    return this.http.get<{ data: any }>(`${this.apiUrl}/${id}`, { headers });
+  }
 }

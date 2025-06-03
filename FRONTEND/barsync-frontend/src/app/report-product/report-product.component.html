@@ -1,0 +1,41 @@
+<div class="container py-5">
+  <button class="btn btn-outline-secondary mb-4" routerLink="/dashboard">
+    ← Volver al Inicio
+  </button>
+
+  <h2 class="text-center mb-4">Reporte de Productos Vendidos</h2>
+
+  <div class="row g-3 align-items-end mb-4">
+    <div class="col-md-3">
+      <label class="form-label">Desde</label>
+      <input type="date" [(ngModel)]="startDate" class="form-control" />
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label">Hasta</label>
+      <input type="date" [(ngModel)]="endDate" class="form-control" />
+    </div>
+
+    <div *ngIf="isAdmin" class="col-md-3">
+      <label class="form-label">Sucursal</label>
+      <select [(ngModel)]="selectedBranchId" class="form-select">
+        <option [ngValue]="null">Todas las Sucursales</option>
+        <option *ngFor="let b of branches" [value]="b.id">{{ b.name }}</option>
+      </select>
+    </div>
+
+    <div class="col-md-2">
+      <label class="form-label">Formato</label>
+      <select class="form-select" [(ngModel)]="format">
+        <option value="xlsx">Excel (.xlsx)</option>
+        <option value="csv">CSV</option>
+      </select>
+    </div>
+
+    <div class="col-md-1 d-grid">
+      <button class="btn btn-primary mt-1" (click)="downloadReport()">
+        Descargar
+      </button>
+    </div>
+  </div>
+</div>

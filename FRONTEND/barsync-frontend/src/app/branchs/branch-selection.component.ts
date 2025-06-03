@@ -2,61 +2,63 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { BranchService } from '../core/branch.service';
 import { AuthService } from '../core/auth.service';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-branch-selection',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HttpClientModule], // ✅ necesario para ngModel, ngValue, routerLink
-  templateUrl: './branch-selection.component.html'
+  imports: [CommonModule, FormsModule, RouterModule],
+  templateUrl: './branch-selection.component.html',
 })
 export class BranchSelectionComponent implements OnInit {
   branchId: number | null = null;
   branches: any[] = [];
+  isAdmin: boolean = false;
 
   constructor(
     private branchService: BranchService,
     private authService: AuthService,
-    private router: Router,
-    private http: HttpClient
+    private router: Router
   ) {}
 
-  ngOnInit() {
-    const storedBranch = this.branchService.getBranchId();
-    if (storedBranch) {
-      this.branchId = storedBranch;
-    }
-
+  ngOnInit(): void {
     const user = this.authService.getUserData();
-    if (user?.role === 'admin') {
-      this.loadBranches();
-    }
-  }
+    const role = user?.role;
+    const branchId = user?.branchId;
+    this.isAdmin = role === 'admin';
 
-  loadBranches() {
-    const token = localStorage.getItem('token');
-    this.http.get<any>('http://localhost:3000/api/branches', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }).subscribe({
-      next: (res) => {
-        this.branches = res.data;
-      },
-      error: (err) => {
-        console.error('❌ Error cargando sedes:', err);
-      }
-    });
-  }
-
-  selectBranch() {
-    if (this.branchId !== null) {
-      this.branchService.setBranchId(this.branchId);
-      this.router.navigate(['/dashboard']);
+    if (this.isAdmin) {
+      this.branchService.getAllBranches().subscribe({
+        next: (res) => (this.branches = res.data),
+        error: (err) => console.error('Error cargando sedes', err),
+      });
     } else {
-      alert('⚠️ Por favor selecciona una sede válida.');
+      this.branchService.getBranchById(branchId).subscribe({
+        next: (res) => {
+          this.branches = [res.data];
+          this.branchId = res.data.id;
+        },
+        error: (err) => {
+          console.error('❌ Error obteniendo sucursal asignada:', err);
+          this.branches = [{
+            id: branchId,
+            name: 'Sucursal asignada',
+            location: ''
+          }];
+          this.branchId = branchId;
+        }
+      });
     }
+  }
+
+  selectBranch(): void {
+    if (!this.branchId) {
+      alert('Debes seleccionar una sucursal');
+      return;
+    }
+
+    this.branchService.setBranchId(this.branchId);
+    this.router.navigate(['/dashboard']);
   }
 }

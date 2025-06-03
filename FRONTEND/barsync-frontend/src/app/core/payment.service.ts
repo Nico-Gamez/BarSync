@@ -18,8 +18,8 @@ export class PaymentService {
     const token = localStorage.getItem('token');
     return {
       headers: new HttpHeaders({
-        Authorization: `Bearer ${token}`
-      })
+        Authorization: `Bearer ${token}`,
+      }),
     };
   }
 
@@ -35,14 +35,24 @@ export class PaymentService {
     return this.http.get(this.withBranchParam(this.apiUrl), this.getHeaders());
   }
 
-  create(payment: { orderId: number; paymentMethod: string; totalPaid: number }): Observable<any> {
+  create(payment: {
+    orderId: number;
+    paymentMethod: string;
+    totalPaid: number;
+  }): Observable<any> {
     const cashierId = this.authService.getUserData()?.id;
-    return this.http.post(this.apiUrl, { ...payment, cashierId }, this.getHeaders());
+    return this.http.post(
+      this.apiUrl,
+      { ...payment, cashierId },
+      this.getHeaders()
+    );
   }
 
   getDetails(orderId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${orderId}/details`, this.getHeaders());
+    return this.http.get(
+      `${this.apiUrl}/${orderId}/details`,
+      this.getHeaders()
+    );
   }
-  
-  
+
 }

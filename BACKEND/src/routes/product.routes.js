@@ -11,4 +11,9 @@ router.delete('/:id', verifyToken, hasRole('admin'), productController.deletePro
 // Todos los roles logueados pueden ver productos
 router.get('/', verifyToken, productController.getAllProducts);
 
+// Reporte XLSX y CSV
+router.get('/report/filter', verifyToken, hasRole('admin', 'cashier'), productController.downloadFilteredProductReport);
+
+
+
 module.exports = router;

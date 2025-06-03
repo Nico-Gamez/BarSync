@@ -17,9 +17,16 @@ Table.findAll = async () => {
 };
 
 Table.findByBranch = async (branchId) => {
-  const [rows] = await db.query('SELECT * FROM tables WHERE branch_id = ?', [branchId]);
+  const [rows] = await db.query(
+    `SELECT tables.*, branches.name AS branch_name 
+     FROM tables 
+     JOIN branches ON tables.branch_id = branches.id 
+     WHERE tables.branch_id = ?`,
+    [branchId]
+  );
   return rows;
 };
+
 
 // Actualizar estado de una mesa
 Table.updateStatus = async (id, status) => {

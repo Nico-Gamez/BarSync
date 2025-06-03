@@ -17,21 +17,20 @@ exports.confirmOrder = async (req, res) => {
   try {
     await connection.beginTransaction();
 
-    // 1. Crear pedido como 'confirmed' directamente
+    // 1. Crear pedido
     const [orderResult] = await connection.query(
       'INSERT INTO orders (waiter_id, table_id, status) VALUES (?, ?, "confirmed")',
       [waiterId, tableId]
     );
     const orderId = orderResult.insertId;
 
-    // 2. Insertar productos en order_details
+    // 2. Insertar productos y actualizar inventario
     for (const p of products) {
       await connection.query(
         'INSERT INTO order_details (order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?)',
         [orderId, p.productId, p.quantity, p.unitPrice]
       );
 
-      // 3. Actualizar inventario
       const [inventoryRows] = await connection.query(
         'SELECT id, quantity FROM inventory WHERE product_id = ? FOR UPDATE',
         [p.productId]
@@ -42,7 +41,6 @@ exports.confirmOrder = async (req, res) => {
       }
 
       const inventory = inventoryRows[0];
-
       if (inventory.quantity < p.quantity) {
         throw new Error(`❌ Stock insuficiente para producto ID ${p.productId}`);
       }
@@ -52,6 +50,12 @@ exports.confirmOrder = async (req, res) => {
         [p.quantity, inventory.id]
       );
     }
+
+    // 🔥 3. Marcar la mesa como "occupied"
+    await connection.query(
+      'UPDATE tables SET status = "occupied" WHERE id = ?',
+      [tableId]
+    );
 
     await connection.commit();
     return success(res, { orderId }, '✅ Pedido creado y confirmado exitosamente.');

@@ -1,6 +1,6 @@
 <div class="d-flex align-items-center justify-content-center vh-100 bg-light">
     <div class="card shadow-sm p-4" style="width: 400px;">
-        <h2 class="text-center mb-4">Login to BarSync</h2>
+        <h2 class="text-center mb-4">Inicio de Sesión BarSync</h2>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
             <div class="mb-3">
@@ -9,23 +9,25 @@
             </div>
 
             <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
+                <label for="password" class="form-label">Contraseña</label>
                 <input type="password" id="password" formControlName="password" class="form-control" />
             </div>
 
             <div *ngIf="errorMessage" class="alert alert-danger text-center mb-4">
                 {{ errorMessage }} <br />
-                <small>If you forgot your password, <a routerLink="/forgot-password">click here</a>.</small>
+                <small>Si olvidaste tu contraseña contacta con tu administrador</small>
             </div>
 
 
             <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
             </div>
         </form>
 
-        <div class="text-center mt-3">
+        <!--
+            <div class="text-center mt-3">
             <a routerLink="/forgot-password">Forgot password?</a>
-        </div>
+            </div>
+        -->
     </div>
 </div>

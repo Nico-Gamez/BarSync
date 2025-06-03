@@ -50,4 +50,14 @@ export class AuthService {
     }
     return null;
   }
+
+  getRole(): string | null {
+    const user = this.getUserData();
+    return user?.role || null;
+  }
+
+  getBranchId(): number | null {
+    const user = this.getUserData();
+    return user?.branchId || null;
+  }
 }

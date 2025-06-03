@@ -36,21 +36,22 @@ export class LoginComponent {
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
           localStorage.setItem('token', response.data.token);
-  
+
           const user = this.authService.getUserData();
-          console.log('✅ Rol del usuario:', user?.role); // ✅ Muestra el rol en consola
-  
-          this.router.navigate(['/dashboard']);
+          console.log('✅ Rol del usuario:', user?.role);
+
+          // 🔥 Redirigir primero a branch-selection siempre
+          this.router.navigate(['/branch-selection']);
         },
         error: (err) => {
           if (err.error?.code === 'E01') {
-            this.errorMessage = 'Incorrect credentials. Forgot your password? Click below.';
+            this.errorMessage =
+              'Credenciales incorrectas. Olvidaste tu contraseña?';
           } else {
-            this.errorMessage = 'Server error. Please try again later.';
+            this.errorMessage = 'Error del servidor. Por favor intenta más tarde.';
           }
-        }
+        },
       });
     }
   }
-  
 }

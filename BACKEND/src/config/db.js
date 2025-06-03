@@ -5,7 +5,7 @@ require('dotenv').config();
 const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
-    password: process.env.DB_PASS, // Nota: tú usas DB_PASS en tu env, no DB_PASSWORD
+    password: process.env.DB_PASS, 
     database: process.env.DB_NAME,
     waitForConnections: true,
     connectionLimit: 10,
@@ -16,10 +16,23 @@ const db = mysql.createPool({
 db.getConnection()
     .then(connection => {
         console.log('✅ Conectado a MySQL');
-        connection.release(); // MUY importante: liberar la conexión
+        connection.release(); 
     })
     .catch(err => {
         console.error('❌ Error de conexión a MySQL:', err);
     });
+
+// Medir tiempo de conexión a la base de datos
+const start = Date.now();
+db.getConnection()
+    .then(connection => {
+        const duration = Date.now() - start;
+        console.log(`✅ Conectado a MySQL en ${duration}ms`);
+        connection.release();
+    })
+    .catch(err => {
+        console.error('❌ Error de conexión a MySQL:', err);
+    });
+
 
 module.exports = db;
